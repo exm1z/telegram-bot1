@@ -1,5 +1,5 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, ContextTypes, filters
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, MessageHandler, ContextTypes, filters
 from config import BOT_TOKEN, ADMIN_CHAT_ID
 
 user_data = {}
@@ -42,12 +42,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         context.user_data.clear()
 
-def main():
-    app = Application.builder().token(BOT_TOKEN).build()
+async def main():
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    app.run_polling()
+    await app.run_polling()
 
 if __name__ == "__main__":
-    main()
+    import asyncio
+    asyncio.run(main())
